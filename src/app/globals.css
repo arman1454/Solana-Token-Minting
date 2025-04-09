@@ -83,3 +83,7 @@ body {
   }
       
 }
+
+.arc-clip {
+  clip-path: inset(0 0 50% 50%);
+}

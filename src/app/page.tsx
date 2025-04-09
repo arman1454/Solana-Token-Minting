@@ -2,6 +2,7 @@
 import { AirDropModal } from "@/components/Airdrop/page";
 import CreateModal from "@/components/CreateModal/CreateModal";
 import { DonateModal } from "@/components/Donate/DonateModal";
+import FeaturesView from "@/components/Feature/FeaturesView";
 import { HeroSection } from "@/components/HeroSection/HeroSection";
 import ModalWithForm from "@/components/ModalWithForm";
 import NormalForm from "@/components/NormalForm";
@@ -25,6 +26,7 @@ export default function Home() {
         setOpenCreateModal={setIsCreateModalOpen}
         setOpenSendTransaction={setOpenSendTransaction}
         setOpenTokenMetadata={setOpenTokenMetadata} />
+       <FeaturesView/> 
       <CreateModal open={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
       <TokenMetadataModal open={openTokenMetadata} onClose={() => setOpenTokenMetadata(false)}/>
       <AirDropModal open={openAirDrop} onClose={()=>setOpenAirDrop(false)}/>     

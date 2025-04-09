@@ -37,7 +37,7 @@ export default function RootLayout({
           <AppBar/>
           <ToastProvider placement="top-center"/>
           {children}
-          {/* <Footer/> */}
+          <Footer/>
         </ContextProvider>
 
         <script src="assets/libs/preline/preline.js"></script>
