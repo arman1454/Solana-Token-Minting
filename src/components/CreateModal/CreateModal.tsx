@@ -36,6 +36,11 @@ import { PROGRAM_ID, createCreateMetadataAccountV3Instruction } from "@metaplex-
 import axios from "axios";
 import { useState } from "react";
 
+interface CreateModalProps {
+    open: boolean;
+    onClose: () => void;
+}
+
 const formSchema = z.object({
     name: z.string().min(2, { message: "Token name must be at least 2 characters." }),
     symbol: z.string().min(1, { message: "Symbol is required." }).max(5, { message: "Symbol cannot exceed 5 characters." }),
@@ -45,7 +50,7 @@ const formSchema = z.object({
     description: z.string().min(10, { message: "Description must be at least 10 characters." }),
 });
 
-const CreateModal = ({ open, onClose }) => {
+const CreateModal = ({ open, onClose }: CreateModalProps) => {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
     const [isLoading, setIsLoading] = useState(false);
@@ -104,21 +109,28 @@ const CreateModal = ({ open, onClose }) => {
     const createToken = async (token: z.infer<typeof formSchema>) => {
         setIsLoading(true);
         try {
+            if (!publicKey) {
+                toast.error("Wallet not connected");
+                return;
+            }
+            
             const lamports = await getMinimumBalanceForRentExemptMint(connection);
             const mintKeypair = Keypair.generate();
             const tokenAtA = await getAssociatedTokenAddress(mintKeypair.publicKey, publicKey);
             const metadataUrl = await uploadMetadata(token);
 
+            const metadataPDA = PublicKey.findProgramAddressSync(
+                [Buffer.from("metadata"), PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
+                PROGRAM_ID
+            )[0];
+
             const createMetadataInstruction = createCreateMetadataAccountV3Instruction(
                 {
-                    metadata: PublicKey.findProgramAddressSync(
-                        [Buffer.from("metadata"), PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
-                        PROGRAM_ID
-                    )[0],
+                    metadata: metadataPDA,
                     mint: mintKeypair.publicKey,
-                    mintAuthority: publicKey,
-                    payer: publicKey,
-                    updateAuthority: publicKey,
+                    mintAuthority: publicKey as PublicKey,
+                    payer: publicKey as PublicKey,
+                    updateAuthority: publicKey as PublicKey,
                 },
                 {
                     createMetadataAccountArgsV3: {
@@ -139,15 +151,15 @@ const CreateModal = ({ open, onClose }) => {
 
             const createNewTokenTransaction = new Transaction().add(
                 SystemProgram.createAccount({
-                    fromPubkey: publicKey,
+                    fromPubkey: publicKey as PublicKey,
                     newAccountPubkey: mintKeypair.publicKey,
                     space: MINT_SIZE,
                     lamports,
                     programId: TOKEN_PROGRAM_ID,
                 }),
-                createInitializeMintInstruction(mintKeypair.publicKey, Number(token.decimals), publicKey, publicKey, TOKEN_PROGRAM_ID),
-                createAssociatedTokenAccountInstruction(publicKey, tokenAtA, publicKey, mintKeypair.publicKey),
-                createMintToInstruction(mintKeypair.publicKey, tokenAtA, publicKey, Number(token.amount) * Math.pow(10, Number(token.decimals))),
+                createInitializeMintInstruction(mintKeypair.publicKey, Number(token.decimals), publicKey as PublicKey, publicKey as PublicKey, TOKEN_PROGRAM_ID),
+                createAssociatedTokenAccountInstruction(publicKey as PublicKey, tokenAtA, publicKey as PublicKey, mintKeypair.publicKey),
+                createMintToInstruction(mintKeypair.publicKey, tokenAtA, publicKey as PublicKey, Number(token.amount) * Math.pow(10, Number(token.decimals))),
                 createMetadataInstruction
             );
 
@@ -169,6 +181,7 @@ const CreateModal = ({ open, onClose }) => {
             });
         } catch (error) {
             toast.error("Token creation failed");
+            console.error(error);
         } finally {
             setIsLoading(false);
         }
@@ -180,11 +193,11 @@ const CreateModal = ({ open, onClose }) => {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] bg-[#1b1c1d] border-none">
                 {!tokenMintAddress ? (
                     <>
                         <DialogHeader>
-                            <DialogTitle>Token Details</DialogTitle>
+                            <DialogTitle className="text-transparent bg-gradient-to-r from-[#C4A44D] via-[#f7f595] to-[#C4A44D] bg-clip-text">Token Details</DialogTitle>
                         </DialogHeader>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -193,9 +206,9 @@ const CreateModal = ({ open, onClose }) => {
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Name</FormLabel>
+                                            <FormLabel className="text-[#cfcbbf]">Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Token Name" {...field} />
+                                                <Input className="col-span-3 text-[#cfcbbf] bg-[#555] border-none placeholder:text-background placeholder:font-semibold ring-offset-[#C4A44D]" placeholder="Token Name" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -206,9 +219,9 @@ const CreateModal = ({ open, onClose }) => {
                                     name="symbol"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Symbol</FormLabel>
+                                            <FormLabel className="text-[#cfcbbf]">Symbol</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Symbol" {...field} />
+                                                <Input className="col-span-3 text-[#cfcbbf] bg-[#555] border-none placeholder:text-background placeholder:font-semibold ring-offset-[#C4A44D]" placeholder="Symbol" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -219,9 +232,9 @@ const CreateModal = ({ open, onClose }) => {
                                     name="decimals"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Decimals</FormLabel>
+                                            <FormLabel className="text-[#cfcbbf]">Decimals</FormLabel>
                                             <FormControl>
-                                                <Input type="number" placeholder="Decimals" {...field} />
+                                                <Input className="col-span-3 text-[#cfcbbf] bg-[#555] border-none placeholder:text-background placeholder:font-semibold ring-offset-[#C4A44D]" type="number" placeholder="Decimals" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -232,9 +245,9 @@ const CreateModal = ({ open, onClose }) => {
                                     name="amount"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Amount</FormLabel>
+                                            <FormLabel className="text-[#cfcbbf]">Amount</FormLabel>
                                             <FormControl>
-                                                <Input type="number" placeholder="Supply" {...field} />
+                                                <Input className="col-span-3 text-[#cfcbbf] bg-[#555] border-none placeholder:text-background placeholder:font-semibold ring-offset-[#C4A44D]" type="number" placeholder="Supply" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -245,9 +258,10 @@ const CreateModal = ({ open, onClose }) => {
                                     name="picture"
                                     render={({ field: { onChange, value, ...rest } }) => (
                                         <FormItem>
-                                            <FormLabel>Upload Token Image</FormLabel>
+                                            <FormLabel className="text-[#cfcbbf]">Upload Token Image</FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    className="col-span-3 text-[#cfcbbf] bg-[#555] border-none placeholder:text-background placeholder:font-semibold ring-offset-[#C4A44D]"
                                                     type="file"
                                                     accept="image/*"
                                                     onChange={(e) => {
@@ -266,15 +280,15 @@ const CreateModal = ({ open, onClose }) => {
                                     name="description"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Description</FormLabel>
+                                            <FormLabel className="text-[#cfcbbf]">Description</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Description" {...field} />
+                                                <Input className="col-span-3 text-[#cfcbbf] bg-[#555] border-none placeholder:text-background placeholder:font-semibold ring-offset-[#C4A44D]" placeholder="Description" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <Button className="w-1/2" color="primary" type="submit">
+                                <Button className="w-1/2 bg-gradient-to-r from-[#C4A44D] via-[#f7f595] to-[#C4A44D] text-background font-sans font-medium" color="primary" type="submit">
                                     Submit
                                 </Button>
                             </form>

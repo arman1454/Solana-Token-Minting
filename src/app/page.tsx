@@ -21,12 +21,13 @@ export default function Home() {
   return (
     <div className="bg-[#1b1c1d] flex flex-col items-center justify-center">
       <HeroSection setOpenCreateModal={setIsCreateModalOpen} isCreateModalOpen = {isCreateModalOpen}/>
+      <FeaturesView />
       <ToolsView setOpenAirDrop={setOpenAirDrop}
         setOpenContact={setOpenContact}
         setOpenCreateModal={setIsCreateModalOpen}
         setOpenSendTransaction={setOpenSendTransaction}
         setOpenTokenMetadata={setOpenTokenMetadata} />
-       <FeaturesView/> 
+        
       <CreateModal open={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
       <TokenMetadataModal open={openTokenMetadata} onClose={() => setOpenTokenMetadata(false)}/>
       <AirDropModal open={openAirDrop} onClose={()=>setOpenAirDrop(false)}/>     

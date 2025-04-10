@@ -66,7 +66,7 @@ const ToolsView: FC<ToolsViewProps> = ({
     ]
 
   return (
-    <section>
+    <section className='pb-12'>
         <div className='container'>
               <div className='mb-12 flex items-end justify-between'>
                   <div className='mx-auto max-w-2xl text-center'>
