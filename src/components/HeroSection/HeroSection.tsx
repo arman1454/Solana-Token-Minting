@@ -130,12 +130,12 @@ const HeroSection = ({
                                 <div className="absolute left-44 flex gap-1">
                                     <p className="font-semibold text-default-400 text-small">Account : </p>
                                     <p className="text-default-400 text-small">
-                                        {publicKey ? `${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}` : "Not Connected"}
+                                        {publicKey ? `${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}` : "??????"}
                                     </p>
                                 </div>
                                 <div className="flex gap-1">
                                     <p className="font-semibold text-default-400 text-small">Total Minted :</p>
-                                    <p className="text-default-400 text-small">12</p>
+                                    <p className="text-default-400 text-small">{publicKey ? 12:0}</p>
                                 </div>
                             </CardFooter>
                         </Card>
