@@ -104,7 +104,7 @@ const HeroSection = ({
 
 
                     </div>
-                    <div className="ml-4 flex flex-col items-center space-y-12">
+                    <div className="lg:ml-4 flex flex-col items-center space-y-12 px-0 md:px-20 lg:px-0">
                         <Card className="border-1 border-[#f2e782ff] space-y-5 w-full shadow-sm bg-inherit rounded-md">
                             <CardHeader className="justify-between">
                                 <div className="flex gap-2">
@@ -126,17 +126,18 @@ const HeroSection = ({
                                 </p>
                                 
                             </CardBody>
-                            <CardFooter className="gap-3">
-                                <div className="absolute left-44 flex gap-1">
-                                    <p className="font-semibold text-default-400 text-small">Account : </p>
-                                    <p className="text-default-400 text-small">
-                                        {publicKey ? `${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}` : "??????"}
-                                    </p>
-                                </div>
+                            <CardFooter className="gap-28 md:gap-64 lg:gap-20">
                                 <div className="flex gap-1">
                                     <p className="font-semibold text-default-400 text-small">Total Minted :</p>
-                                    <p className="text-default-400 text-small">{publicKey ? 12:0}</p>
+                                    <p className="text-default-400 text-small">{publicKey ? 12 : 0}</p>
                                 </div>
+                                <div className="flex gap-1">
+                                    <p className="font-semibold text-default-400 text-small">Account : </p>
+                                    <p className="text-default-400 text-small">
+                                        {publicKey ? `${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}` : "????.....????"}
+                                    </p>
+                                </div>
+                                
                             </CardFooter>
                         </Card>
                         <WalletMultiButton className="!bg-helius-orange !rounded-xl hover:!bg-[#161b19] transition-all duration-200" />
