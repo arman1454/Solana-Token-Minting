@@ -25,7 +25,7 @@ const NetworkSwitcher: FC = () => {
       className="max-w-xs purple-dark text-transparent bg-gradient-to-r from-[#C4A44D] via-[#f7f595] to-[#C4A44D] bg-clip-text"
     >
       {networks.map((network) => (
-        <SelectItem key={network.value} value={network.value} className="purple-dark text-transparent bg-gradient-to-r from-[#C4A44D] via-[#f7f595] to-[#C4A44D] bg-clip-text">
+        <SelectItem key={network.value} className="purple-dark text-transparent bg-gradient-to-r from-[#C4A44D] via-[#f7f595] to-[#C4A44D] bg-clip-text">
           {network.label}
         </SelectItem>
       ))}

@@ -99,6 +99,11 @@ const ModalWithForm = () => {
     const createToken = async (token: z.infer<typeof formSchema>) => {
         setIsLoading(true);
         try {
+            if (!publicKey) {
+                toast.error("Wallet not connected");
+                return;
+            }
+
             const lamports = await getMinimumBalanceForRentExemptMint(connection);
             const mintKeypair = Keypair.generate();
             const tokenAtA = await getAssociatedTokenAddress(mintKeypair.publicKey, publicKey);
