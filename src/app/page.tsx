@@ -4,12 +4,8 @@ import CreateModal from "@/components/CreateModal/CreateModal";
 import { DonateModal } from "@/components/Donate/DonateModal";
 import FeaturesView from "@/components/Feature/FeaturesView";
 import { HeroSection } from "@/components/HeroSection/HeroSection";
-import ModalWithForm from "@/components/ModalWithForm";
-import NormalForm from "@/components/NormalForm";
-import Selection from "@/components/Selection";
 import TokenMetadataModal from "@/components/TokenMetadatModal/TokenMetadataModal";
 import ToolsView from "@/components/Tools/ToolsView";
-import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
