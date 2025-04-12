@@ -14,7 +14,12 @@ import {
 } from "@/components/ui/dialog";
 import useUserSOLBalanceStore from "@/stores/useUserSOLBalanceStore";
 
-export const AirDropModal = ({ open, onClose }) => {
+interface AirDropModalProps {
+    open: boolean;
+    onClose: () => void;
+}
+
+export const AirDropModal = ({ open, onClose }:AirDropModalProps) => {
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const balance = useUserSOLBalanceStore((s) => s.balance);

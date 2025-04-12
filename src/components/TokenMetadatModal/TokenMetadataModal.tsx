@@ -16,11 +16,27 @@ import {
 import { Input } from "@/components/ui/input";
 // import { ClipLoader } from "react-spinners";
 
-export const TokenMetadataModal = ({ open, onClose }) => {
+interface TokenMetadataModalProps {
+    open: boolean;
+    onClose: () => void;
+}
+
+// Define type for token metadata
+interface TokenMetadata {
+    name: string;
+    symbol: string;
+    uri: string;
+    sellerFeeBasisPoints: number;
+    creators: any[] | null;
+    collection: any | null;
+    uses: any | null;
+}
+
+export const TokenMetadataModal = ({ open, onClose }:TokenMetadataModalProps) => {
     const { connection } = useConnection();
     const [tokenAddress, setTokenAddress] = useState("");
-    const [tokenMetadata, setTokenMetadata] = useState(null);
-    const [logo, setLogo] = useState(null);
+    const [tokenMetadata, setTokenMetadata] = useState<TokenMetadata | null>(null);
+    const [logo, setLogo] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const getMetadata = async () => {
@@ -42,7 +58,7 @@ export const TokenMetadataModal = ({ open, onClose }) => {
             const logoJson = await logoRes.json();
             const { image } = logoJson;
 
-            setTokenMetadata(metadata.data);
+            setTokenMetadata(metadata.data as unknown as TokenMetadata);
             setLogo(image);
             toast.success("Successfully fetched token metadata");
         } catch (error) {
@@ -89,27 +105,27 @@ export const TokenMetadataModal = ({ open, onClose }) => {
                         </DialogHeader>
                         <div className="space-y-4">
                             <div className="flex justify-center">
-                                <img src={logo} alt="Token Logo" className="h-40" />
+                                {logo && <img src={logo} alt="Token Logo" className="h-40" />}
                             </div>
                             <div className="space-y-2">
                                 <Input
                                     placeholder="Token Name"
-                                    value={tokenMetadata.name}
+                                    value={tokenMetadata?.name || ""}
                                     readOnly
                                 />
                                 <Input
                                     placeholder="Token Symbol"
-                                    value={tokenMetadata.symbol || "undefined"}
+                                    value={tokenMetadata?.symbol || "undefined"}
                                     readOnly
                                 />
                                 <Input
                                     placeholder="Token URI"
-                                    value={tokenMetadata.uri}
+                                    value={tokenMetadata?.uri || ""}
                                     readOnly
                                 />
                             </div>
                             <Button
-                                onPress={() => window.open(tokenMetadata.uri, "_blank")}
+                                onPress={() => tokenMetadata?.uri && window.open(tokenMetadata.uri, "_blank")}
                                 className="w-full"
                             >
                                 Open URI
