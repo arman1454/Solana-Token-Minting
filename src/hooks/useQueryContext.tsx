@@ -1,5 +1,5 @@
 import {useRouter} from "next/router";
-import { EndpointTypes } from "models/types";
+import { EndpointTypes } from "@/models/types";
 
 
 export default function useQueryContext() {
@@ -11,7 +11,7 @@ export default function useQueryContext() {
 
     const hasClusterOption = endpoint !== "mainnet";
 
-    const fmtUrlWithCluster = (url)=>{
+    const fmtUrlWithCluster = (url: string) => {
         if(hasClusterOption){
             const mark = url.includes("?") ? "&" : "?";
 
@@ -22,6 +22,6 @@ export default function useQueryContext() {
     }
 
     return {
-        fmtUrlWithCluster;
+        fmtUrlWithCluster
     }
 }
